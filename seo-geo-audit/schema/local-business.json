@@ -1,0 +1,40 @@
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{BUSINESS_NAME}}",
+  "image": "{{STOREFRONT_IMAGE_URL}}",
+  "url": "{{HOMEPAGE_URL}}",
+  "telephone": "{{E164_PHONE_NUMBER}}",
+  "priceRange": "{{PRICE_RANGE_LIKE_$$}}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{STREET}}",
+    "addressLocality": "{{CITY}}",
+    "addressRegion": "{{STATE_OR_REGION}}",
+    "postalCode": "{{POSTAL_CODE}}",
+    "addressCountry": "{{ISO_COUNTRY_CODE}}"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "{{LAT}}",
+    "longitude": "{{LON}}"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "{{HH_MM}}",
+      "closes": "{{HH_MM}}"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday"],
+      "opens": "{{HH_MM}}",
+      "closes": "{{HH_MM}}"
+    }
+  ],
+  "sameAs": [
+    "{{GOOGLE_MAPS_URL}}",
+    "{{FACEBOOK_PAGE_URL}}"
+  ]
+}

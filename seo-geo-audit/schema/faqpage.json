@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "{{QUESTION_1}}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ANSWER_1_PLAIN_OR_HTML}}"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "{{QUESTION_2}}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ANSWER_2_PLAIN_OR_HTML}}"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "{{QUESTION_3}}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ANSWER_3_PLAIN_OR_HTML}}"
+      }
+    }
+  ]
+}

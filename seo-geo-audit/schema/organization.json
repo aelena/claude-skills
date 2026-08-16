@@ -1,0 +1,22 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{COMPANY_NAME}}",
+  "url": "{{HOMEPAGE_URL}}",
+  "logo": "{{LOGO_URL}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "foundingDate": "{{YYYY_MM_DD}}",
+  "sameAs": [
+    "{{LINKEDIN_URL}}",
+    "{{TWITTER_OR_X_URL}}",
+    "{{GITHUB_URL}}",
+    "{{WIKIPEDIA_URL_IF_ANY}}",
+    "{{WIKIDATA_URL_IF_ANY}}"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "{{SUPPORT_EMAIL}}",
+    "availableLanguage": ["English"]
+  }
+}

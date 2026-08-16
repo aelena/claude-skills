@@ -1,0 +1,34 @@
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "{{HOWTO_TITLE}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "image": "{{HERO_IMAGE_URL}}",
+  "totalTime": "{{ISO_8601_DURATION_LIKE_PT15M}}",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "{{ISO_CURRENCY_CODE}}",
+    "value": "{{ESTIMATED_COST_OR_0}}"
+  },
+  "supply": [
+    { "@type": "HowToSupply", "name": "{{SUPPLY_1}}" }
+  ],
+  "tool": [
+    { "@type": "HowToTool", "name": "{{TOOL_1}}" }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "{{STEP_1_NAME}}",
+      "text": "{{STEP_1_INSTRUCTIONS}}",
+      "url": "{{CANONICAL_URL_WITH_ANCHOR}}#step1",
+      "image": "{{STEP_1_IMAGE_URL_OR_OMIT}}"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "{{STEP_2_NAME}}",
+      "text": "{{STEP_2_INSTRUCTIONS}}",
+      "url": "{{CANONICAL_URL_WITH_ANCHOR}}#step2"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+# claude-skills
+
+> Seven Claude Code skills by Antonio Elena. Each is a self-contained directory with a SKILL.md describing when to engage and how to reason about the task, plus playbooks, worked examples and deterministic shell scripts. No dependencies between them; install one or all.
+
+Skills are installed by placing a skill directory in `~/.claude/skills/`. `install.sh` symlinks them (macOS/Linux); `install.ps1` copies them (Windows).
+
+## Skills
+
+- [seo-geo-audit](seo-geo-audit/SKILL.md): Audits a frontend for classical SEO and for GEO — how easily a language model can extract, cite and reason about the page. Emits a report card with file:line citations.
+- [vibeasfunc](vibeasfunc/SKILL.md): Translates legacy VBA into idiomatic functional C# on .NET 8+ — LINQ over loops, Result types over error codes, immutable records, side effects at the boundary.
+- [bpmnemonic](bpmnemonic/SKILL.md): Converts BPMN 2.0 diagrams into a technical spec or a PRD, extracting actors from pools and lanes and exception flows from error and timer events.
+- [repo-badges](repo-badges/SKILL.md): Detects a repository's real characteristics and adds the corresponding shields.io badges.
+- [llms-txt](llms-txt/SKILL.md): Generates or validates an llms.txt file per the llmstxt.org spec.
+- [break-time](break-time/SKILL.md): Wall-clock break reminders inside a Claude Code session, implemented as a UserPromptSubmit hook.
+- [poet-commit](poet-commit/SKILL.md): Composes git commit messages as Japanese short-form poetry, with form selected by diff size.
+
+## Optional
+
+- [README](README.md): Human-facing overview, install instructions, and notes on writing your own skill.
+- [HOOKS-101](break-time/HOOKS-101.md): A standalone explanation of the Claude Code hooks schema — events, matchers, and why the hooks key is nested twice.
+- [LICENSE](LICENSE): MIT.

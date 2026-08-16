@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "{{APP_NAME}}",
+  "applicationCategory": "{{CATEGORY_LIKE_BusinessApplication}}",
+  "operatingSystem": "{{OS_LIKE_Web_or_iOS_or_Android}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "url": "{{APP_HOMEPAGE_URL}}",
+  "image": "{{APP_SCREENSHOT_OR_LOGO_URL}}",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{PRICE_OR_0_FOR_FREE_TIER}}",
+    "priceCurrency": "{{ISO_CURRENCY_CODE}}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{AVG_RATING}}",
+    "reviewCount": "{{REVIEW_COUNT}}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{PUBLISHER_NAME}}",
+    "url": "{{PUBLISHER_URL}}"
+  }
+}

@@ -1,0 +1,6 @@
+# Local Claude Code permission files — machine-specific, never published
+.claude/
+
+.DS_Store
+Thumbs.db
+*.swp
