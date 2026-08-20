@@ -42,23 +42,35 @@ Or:
 cp -r seo-geo-audit ~/.claude/skills/seo-geo-audit
 ```
 
-Then in any frontend repo:
+Then, from inside any frontend repo:
 
 ```
-/audit
+/seo-geo-audit
 ```
 
 …or say "audit this site for SEO" / "is this LLM-friendly".
 
 ## Invocation cheatsheet
 
+`/seo-geo-audit` is the only slash command — Claude Code takes it from the skill's
+directory name. `/audit` and `/seo-geo` work as natural-language triggers but are
+not commands and will not autocomplete.
+
+The argument is a **mode**, not a target. The skill reads source from disk and
+never fetches a URL, so a domain name is not a valid argument; it audits the
+current directory unless you give it a path.
+
 | You say | What happens |
 |---|---|
-| `/audit` or `/seo-geo` | Standard audit: SEO + GEO |
-| `/audit deep` | Walk all routes/pages |
-| `/audit seo` | Classical SEO only |
-| `/audit geo` | GEO only |
-| `/audit fix` | Audit, then propose concrete file edits |
+| `/seo-geo-audit` | Standard audit of the current repo: SEO + GEO |
+| `/seo-geo-audit deep` | Walk all routes/pages |
+| `/seo-geo-audit seo` | Classical SEO only |
+| `/seo-geo-audit geo` | GEO only |
+| `/seo-geo-audit fix` | Audit, then propose concrete file edits |
+| `/seo-geo-audit report.md` | Write the report to a file |
+| `/seo-geo-audit ../other-site` | Audit that path instead of the current directory |
+
+Modes combine: `/seo-geo-audit deep geo report.md`.
 
 ## What it audits
 

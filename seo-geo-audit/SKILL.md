@@ -11,15 +11,34 @@ The novel value is GEO. Classical SEO scanners have existed for years. But "is y
 
 ## Invocation
 
-| Trigger | Behavior |
+**The only slash command is `/seo-geo-audit`.** Claude Code derives it from the
+skill's directory name, so `/audit` and `/seo-geo` do not exist as commands and
+will not autocomplete. They *do* work as natural-language triggers — they are
+listed in the `description` frontmatter, so "run an audit" or "check my
+structured data" will reach this skill.
+
+### The argument is a mode, not a target
+
+`/seo-geo-audit` audits the **current working directory**. It reads source from
+disk and never fetches a URL, so a domain name is not a valid argument — see
+*Safety guardrails*. To audit a different checkout, pass its path.
+
+| Invocation | Behavior |
 |---|---|
-| `/audit` or `/seo-geo` or `/seo-geo-audit` | Standard audit: SEO + GEO, root-level + key routes, ~30 files max |
-| `/audit deep` | Walk all routes/pages discoverable in the repo. Slower, more thorough |
-| `/audit seo` | Classical SEO only |
-| `/audit geo` | GEO only |
-| `/audit fix` | Audit, then propose concrete file edits for each high-severity finding (ask before each edit) |
-| `/audit report.md` | Write the report to a file instead of showing inline |
+| `/seo-geo-audit` | Standard audit of the cwd: SEO + GEO, root-level + key routes, ~30 files max |
+| `/seo-geo-audit deep` | Walk all routes/pages discoverable in the repo. Slower, more thorough |
+| `/seo-geo-audit seo` | Classical SEO only |
+| `/seo-geo-audit geo` | GEO only |
+| `/seo-geo-audit fix` | Audit, then propose concrete file edits for each high-severity finding (ask before each edit) |
+| `/seo-geo-audit report.md` | Write the report to a file instead of showing it inline |
+| `/seo-geo-audit ../other-site` | Audit that path instead of the cwd. Pass it through to every script as the `repo-root` argument they already accept |
 | Natural language: "audit this site for SEO", "is this LLM-friendly", "check my structured data" | Same |
+
+Modes combine where it makes sense: `/seo-geo-audit deep geo report.md` runs a
+deep GEO-only audit and writes it to `report.md`. A token that is neither a
+known mode nor an existing directory is an error — say so rather than silently
+auditing the cwd, which is how a domain name ends up looking like a successful
+run over the wrong repository.
 
 ### Stop / disable
 Not session-based. One-shot. Just don't invoke it.
