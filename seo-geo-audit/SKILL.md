@@ -64,7 +64,9 @@ Not session-based. One-shot. Just don't invoke it.
 
 ## Cross-skill awareness
 
-If `llms-txt` skill is installed, recommend running it when GEO findings include "missing llms.txt". If `a11y-audit` skill exists, point to it at the bottom of every report ("This audit covers SEO and GEO. For accessibility, run /a11y-audit.").
+If the `llms-txt` skill is installed, recommend running it when GEO findings include "missing llms.txt".
+
+Do not point at skills that may not exist. This audit covers SEO and GEO; say so plainly and leave it there. Accessibility overlaps at the edges — `alt` text carries SEO-015 and GEO-028 weight — but those are scored here on their own terms, and the report should not imply a companion audit is available.
 
 ## Safety guardrails
 

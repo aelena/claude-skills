@@ -10,7 +10,6 @@
 |---|---|---|---|---|
 | SEO  | {{seo_grade}} | {{seo_score}}/100 | {{seo_scored}} of {{seo_total}} checks ({{seo_na}} N/A, {{seo_unverified}} unverified) | {{seo_high}} high · {{seo_medium}} medium · {{seo_low}} low |
 | GEO  | {{geo_grade}} | {{geo_score}}/100 | {{geo_scored}} of {{geo_total}} checks ({{geo_na}} N/A, {{geo_unverified}} unverified) | {{geo_high}} high · {{geo_medium}} medium · {{geo_low}} low |
-| A11y | not audited   | —                 | —                                                                                     | — |
 
 **Arithmetic:** SEO `{{seo_arithmetic}}` · GEO `{{geo_arithmetic}}`
 

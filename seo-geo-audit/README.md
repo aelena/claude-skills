@@ -17,7 +17,6 @@ The novel value here is GEO. Classical SEO scanners have existed for years. But 
 |---|---|---|---|
 | SEO  | A   | 92/100 | 0 high · 2 medium · 4 low |
 | GEO  | A-  | 88/100 | 0 high · 3 medium · 2 low |
-| A11y | not audited | — | run /a11y-audit for accessibility scoring |
 
 ## Top fixes (highest leverage first)
 

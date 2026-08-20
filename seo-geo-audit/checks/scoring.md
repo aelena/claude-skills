@@ -82,7 +82,6 @@ in GEO. Don't merge them — they answer different questions.
 ```
 SEO:  A   (92/100)  — scored over 28 of 30 checks (2 N/A)
 GEO:  D   (54/100)  — scored over 33 of 37 checks (2 N/A, 2 unverified)
-A11y: not audited
 ```
 
 ## Comparing multiple sites
