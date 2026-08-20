@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/aelena/claude-skills/seo-geo-audit/audit-result.schema.json",
+  "title": "seo-geo-audit result",
+  "description": "Canonical machine-readable output. CSV and SARIF are derived from this file by scripts/render-formats.py and are never authored directly, so the three can never disagree.",
+  "type": "object",
+  "required": ["schema_version", "audited_at", "target", "framework", "scores", "findings"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "skill_version":  { "type": "string" },
+    "audited_at":     { "type": "string", "format": "date-time" },
+    "target":         { "type": "string", "description": "Path audited, relative or absolute. Never a URL." },
+    "site_name":      { "type": "string" },
+    "framework":      { "type": "string" },
+    "scope":          { "type": "string", "enum": ["standard", "deep", "seo", "geo"] },
+    "files_scanned":  { "type": "integer", "minimum": 0 },
+    "scores": {
+      "type": "object",
+      "properties": {
+        "seo": { "$ref": "#/definitions/categoryScore" },
+        "geo": { "$ref": "#/definitions/categoryScore" }
+      }
+    },
+    "findings":       { "type": "array", "items": { "$ref": "#/definitions/finding" } },
+    "unverified":     { "type": "array", "items": { "$ref": "#/definitions/unverified" } },
+    "not_applicable": { "type": "array", "items": { "$ref": "#/definitions/notApplicable" } }
+  },
+  "definitions": {
+    "categoryScore": {
+      "type": "object",
+      "required": ["grade", "score", "scored", "total"],
+      "properties": {
+        "grade":      { "type": "string" },
+        "score":      { "type": "integer", "minimum": 0, "maximum": 100 },
+        "scored":     { "type": "integer", "description": "Checks that counted toward the denominator" },
+        "total":      { "type": "integer", "description": "Checks defined for this category" },
+        "na":         { "type": "integer" },
+        "unverified": { "type": "integer" },
+        "arithmetic": { "type": "string", "description": "e.g. '100 - 16 - 8 - 5 = 71'. Must reconcile with score; --validate enforces this." }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "category", "severity", "deduction", "count", "title"],
+      "properties": {
+        "id":          { "type": "string", "pattern": "^(SEO|GEO)-" },
+        "category":    { "type": "string", "enum": ["seo", "geo"] },
+        "severity":    { "type": "string", "enum": ["high", "medium", "low", "info"] },
+        "deduction":   { "type": "integer", "maximum": 0, "description": "Negative or zero. Charged once per check ID; see checks/scoring.md." },
+        "count":       { "type": "integer", "minimum": 1, "description": "Occurrences across the repo. Drives the ladder tier, not the multiplier." },
+        "title":       { "type": "string" },
+        "description": { "type": "string" },
+        "fix":         { "type": "string" },
+        "fix_lang":    { "type": "string" },
+        "occurrences": { "type": "array", "items": { "$ref": "#/definitions/occurrence" } }
+      }
+    },
+    "occurrence": {
+      "type": "object",
+      "required": ["file"],
+      "properties": {
+        "file":   { "type": "string" },
+        "line":   { "type": "integer", "minimum": 1 },
+        "detail": { "type": "string" }
+      }
+    },
+    "unverified": {
+      "type": "object",
+      "required": ["id", "category", "title", "reason"],
+      "properties": {
+        "id":            { "type": "string" },
+        "category":      { "type": "string", "enum": ["seo", "geo"] },
+        "title":         { "type": "string" },
+        "reason":        { "type": "string", "description": "Why source analysis cannot settle it." },
+        "how_to_verify": { "type": "string" },
+        "occurrences":   { "type": "array", "items": { "$ref": "#/definitions/occurrence" } }
+      }
+    },
+    "notApplicable": {
+      "type": "object",
+      "required": ["id", "category", "title", "why"],
+      "properties": {
+        "id":       { "type": "string" },
+        "category": { "type": "string", "enum": ["seo", "geo"] },
+        "title":    { "type": "string" },
+        "why":      { "type": "string" }
+      }
+    }
+  }
+}

@@ -69,8 +69,49 @@ current directory unless you give it a path.
 | `/seo-geo-audit fix` | Audit, then propose concrete file edits |
 | `/seo-geo-audit report.md` | Write the report to a file |
 | `/seo-geo-audit ../other-site` | Audit that path instead of the current directory |
+| `/seo-geo-audit json` | Also write the canonical machine-readable result |
+| `/seo-geo-audit csv` | Also write a flat CSV, one row per occurrence |
+| `/seo-geo-audit sarif` | Also write SARIF for GitHub code scanning |
 
-Modes combine: `/seo-geo-audit deep geo report.md`.
+Modes combine: `/seo-geo-audit deep geo report.md`, or
+`/seo-geo-audit deep json csv sarif`.
+
+## Machine-readable output
+
+The markdown report is always produced. Any combination of `json`, `csv` and
+`sarif` can be requested alongside it.
+
+**JSON is the only authored artifact.** CSV and SARIF are derived from it by
+`scripts/render-formats.py`, so the three cannot drift apart — a report that
+says B+ while the data says 71 is not a possible state. The shape is pinned in
+`schema/audit-result.schema.json`.
+
+| Format | Shape | Good for |
+|---|---|---|
+| `json` | Scores with denominators, findings with `file:line`, plus `unverified` and `not_applicable` | Diffing runs, comparing sites, feeding anything else |
+| `csv` | One row per occurrence, with grade and score denormalized onto each row | Pivot tables, sharing with people who want a spreadsheet |
+| `sarif` | SARIF 2.1.0 | GitHub code scanning — findings appear in the Security tab and as PR annotations |
+
+SARIF has no concept of a category score, so grades are mirrored into run
+properties and the JSON stays authoritative. Unverified checks ship as SARIF
+notes, never as errors: they are not failures, and should not gate a merge.
+
+The renderer validates before it writes, and refuses on failure:
+
+```
+$ python scripts/render-formats.py audit.json --csv --sarif
+render-formats: audit.json failed validation (2 problems):
+  - SEO-007: deduction -3 does not match the ladder -- severity high
+    with 1 occurrence(s) is -8 (see checks/scoring.md)
+  - seo score is 71 but its findings sum to -40, giving 60
+
+Nothing was written.
+```
+
+That check enforces `checks/scoring.md` mechanically rather than trusting the
+model to have applied it: a check ID charged more than once, a deduction off
+the severity ladder, a grade outside its band, a score that does not reproduce
+from its own findings, or a check listed as both a finding and not-applicable.
 
 ## What it audits
 
