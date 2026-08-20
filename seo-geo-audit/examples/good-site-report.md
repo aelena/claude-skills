@@ -6,22 +6,40 @@
 
 ## Score
 
-| Category | Grade | Score | Findings |
-|---|---|---|---|
-| SEO  | A   | 92/100 | 0 high · 2 medium · 4 low |
-| GEO  | A-  | 88/100 | 0 high · 3 medium · 2 low |
+| Category | Grade | Score | Scored over | Findings |
+|---|---|---|---|---|
+| SEO  | A- | 89/100 | 29 of 30 checks (1 N/A, 0 unverified) | 0 high · 1 medium · 4 low |
+| GEO  | B+ | 84/100 | 35 of 37 checks (1 N/A, 1 unverified) | 0 high · 3 medium · 2 low |
 
-> Solid fundamentals across the board. SEO is near-perfect for a content site this size; GEO would benefit from richer schema on the FAQ pages and a `BreadcrumbList` on the docs section.
+**Arithmetic:** SEO `100 - 5 - 2 - 2 - 1 - 1 = 89` · GEO `100 - 6 - 3 - 3 - 2 - 2 = 84`
+
+> Solid fundamentals across the board. Nothing here is broken — SEO is near-perfect for a content site this size, and every high-severity check passes in both categories. GEO would benefit from richer schema on the FAQ pages and a `BreadcrumbList` on the docs section.
 
 ---
 
 ## Top fixes (highest leverage first)
 
-### 1. GEO-008 — FAQ pages lack `FAQPage` schema  · *medium*
+### 1. GEO-011 — Missing `BreadcrumbList` on docs  · *medium* · -6
+
+**Where:** `src/layouts/DocsLayout.astro:34` (18 doc pages affected, 1 file to change)
+
+**What's wrong:** Docs pages don't expose hierarchy via `BreadcrumbList`. LLMs can't easily reconstruct the parent-child relationship, so a section retrieved on its own arrives without its parent context.
+
+**Fix:** Add a `BreadcrumbList` JSON-LD block in the docs layout, computed from the file path. One edit covers all 18 pages — which is why this outranks findings with a higher severity but narrower reach.
+
+### 2. SEO-005 — Two descriptions over 160 chars  · *medium* · -5
+
+**Where:** `src/pages/about.astro:7`, `src/pages/blog/launching.astro:9`
+
+**What's wrong:** Descriptions are 187 and 203 characters. Google will truncate them mid-clause and may substitute its own snippet.
+
+**Fix:** Trim to ~155 characters, ending on a complete clause.
+
+### 3. GEO-008 — FAQ page lacks `FAQPage` schema  · *medium* · -3
 
 **Where:** `src/pages/faq.astro:1` (1 occurrence)
 
-**What's wrong:** The FAQ page renders questions and answers as plain markdown headings. LLMs can extract them, but a `FAQPage` schema would make every Q/A pair perfectly addressable.
+**What's wrong:** The FAQ page renders questions and answers as plain markdown headings. LLMs can extract them, but a `FAQPage` schema would make every Q/A pair individually addressable.
 
 **Fix:**
 ```astro
@@ -36,50 +54,70 @@
 })} />
 ```
 
-### 2. GEO-011 — Missing BreadcrumbList on docs  · *medium*
-
-**Where:** `src/layouts/DocsLayout.astro:34` (applies to 18 doc pages)
-
-**What's wrong:** Docs pages don't expose hierarchy via `BreadcrumbList`. LLMs can't easily reconstruct the parent-child relationship.
-
-**Fix:** Add a `BreadcrumbList` JSON-LD block in the docs layout, computed from the file path.
-
-### 3. SEO-005 — Two pages have descriptions over 160 chars  · *medium*
-
-**Where:** `src/pages/about.astro:7`, `src/pages/blog/launching.astro:9`
-
-**What's wrong:** Descriptions are 187 and 203 characters. Google will truncate them.
-
-**Fix:** Trim to ~155 characters, ending on a complete clause.
-
 ---
 
 ## All findings
 
-### SEO (6)
+Each line shows the check ID, severity, the deduction actually applied, and the
+occurrence count. A check ID is charged once regardless of how many files fail it.
 
-- **SEO-005** · *medium* — Description over 160 chars
+### SEO (5)
+
+- **SEO-005** · *medium* · -5 — Description over 160 chars (2 occurrences)
   - `src/pages/about.astro:7` — 187 chars, will be truncated
   - `src/pages/blog/launching.astro:9` — 203 chars, will be truncated
-- **SEO-016** · *low* — Decorative images missing `alt=""`
-  - `src/components/Hero.astro:18` — `<img src="/decoration.svg">` should have `alt=""`
-- **SEO-018** · *low* — Missing image dimensions (3 occurrences in `src/pages/blog/`)
-- **SEO-020** · *low* — No Twitter Card tags on blog posts
-- **SEO-027** · *low* — Mild keyword repetition in `src/pages/products.astro` title
+- **SEO-018** · *low* · -2 — Missing image dimensions (3 occurrences)
+  - `src/pages/blog/` — three post images have no `width`/`height`, risking layout shift
+- **SEO-020** · *low* · -2 — No Twitter Card tags (6 occurrences)
+  - `src/layouts/BlogLayout.astro:22` — cascades to all 6 blog posts
+- **SEO-016** · *low* · -1 — Decorative image missing `alt=""` (1 occurrence)
+  - `src/components/Hero.astro:18` — `<img src="/decoration.svg">` should carry `alt=""`
+- **SEO-027** · *low* · -1 — Mild keyword repetition in title (1 occurrence)
+  - `src/pages/products.astro:5`
 
 ### GEO (5)
 
-- **GEO-008** · *medium* — Missing FAQPage schema
+- **GEO-011** · *medium* · -6 — Missing `BreadcrumbList` in docs (18 occurrences)
+  - `src/layouts/DocsLayout.astro:34` — one layout, cascading to 18 pages
+- **GEO-008** · *medium* · -3 — Missing `FAQPage` schema (1 occurrence)
   - `src/pages/faq.astro:1`
-- **GEO-011** · *medium* — Missing BreadcrumbList in docs
-  - `src/layouts/DocsLayout.astro:34`
-- **GEO-014** · *medium* — One blog post has paragraphs averaging 140 words
-  - `src/content/blog/architecture-deep-dive.md`
-- **GEO-022** · *low* — Two posts missing visible author
-- **GEO-024** · *low* — Three docs pages missing last-updated date
+- **GEO-014** · *medium* · -3 — Paragraphs averaging 140 words (1 occurrence)
+  - `src/content/blog/architecture-deep-dive.md` — median paragraph well over the 100-word guideline
+- **GEO-022** · *low* · -2 — Missing visible author (2 occurrences)
+  - `src/content/blog/` — two posts carry no byline
+- **GEO-024** · *low* · -2 — Missing last-updated date (3 occurrences)
+  - `src/content/docs/` — three pages show no revision date
+
+---
+
+## Unverified
+
+Checks that apply but cannot be settled from source alone. **These are not
+failures** and carry no deduction.
+
+- **GEO-013** — JSON-LD validates as JSON
+  - `src/layouts/BlogLayout.astro:12` — the `Article` block is emitted via `set:html={JSON.stringify(...)}`, so the structured data is present and almost certainly well-formed, but it is constructed at build time and cannot be parsed statically.
+  - *To settle it:* run the audit against `dist/` after `astro build`, where the block is inlined as literal JSON.
+
+## Not applicable
+
+Checks excluded from the denominator because they cannot apply to this repo.
+
+- **SEO-030** — Pagination `rel="prev"`/`rel="next"` — the site paginates nothing; the blog index lists all posts on one page.
+- **GEO-010** — `Product` schema — the site sells nothing.
 
 ---
 
 ## Methodology
 
-This audit was generated by the `seo-geo-audit` Claude skill. Each check is a piece of semantic reasoning over the source code, not a regex match. The audit is read-only — to apply fixes, run `/seo-geo-audit fix`.
+This audit was generated by the `seo-geo-audit` Claude skill. Each check is a
+piece of semantic reasoning over the source code, not a regex match — meaning
+findings reflect *content quality*, not just *presence*.
+
+Scoring follows `checks/scoring.md`: each category starts at 100, each failing
+check ID is charged once on a fixed severity/prevalence ladder, and the result
+is floored at 0. Not-applicable checks leave the denominator; unverified checks
+are never charged. The arithmetic is printed above so the number can be checked.
+
+The audit is read-only and reads source only — it does not fetch the live site.
+To apply fixes, run `/seo-geo-audit fix` and confirm each edit.
