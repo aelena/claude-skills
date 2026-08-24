@@ -8,7 +8,10 @@ The novel value here is GEO. Classical SEO scanners have existed for years. But 
 
 ## What it produces
 
-```markdown
+This is an example:
+
+---
+
 # Audit report — example.dev
 
 ## Score
@@ -25,7 +28,8 @@ The novel value here is GEO. Classical SEO scanners have existed for years. But 
 **What's wrong:** The FAQ page renders questions and answers as plain markdown headings...
 **Fix:** [concrete code snippet]
 ...
-```
+
+---
 
 See `examples/good-site-report.md` and `examples/bad-site-report.md` for full sample outputs.
 
