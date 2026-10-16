@@ -1,6 +1,6 @@
 # claude-skills
 
-Seven [Claude Code](https://claude.com/claude-code) skills. Each one exists because I hit the problem it solves and got tired of re-explaining it.
+Eight [Claude Code](https://claude.com/claude-code) skills. Each one exists because I hit the problem it solves and got tired of re-explaining it.
 
 They share a shape: a `SKILL.md` that tells Claude when to engage and how to think about the task, a playbook of domain knowledge it can load on demand, worked examples, and shell scripts for the parts that should be deterministic rather than inferred. No skill here asks Claude to guess at something a script can establish.
 
@@ -56,6 +56,13 @@ Detects what a repository actually is — CI, package manager, language, framewo
 Generates or updates an `llms.txt` at the repository root following the [llmstxt.org](https://llmstxt.org) spec, so a language model can navigate the project instead of grepping it. Also validates an existing one.
 
 **Try:** `/llms-txt`, `/llms-txt validate`
+
+### [`memoria`](memoria/)
+Gives every project a working memory between sessions: a local, never-committed `_memoria.md` with how to resume, what is half-done, what was decided and why, open questions, and what comes next. A `SessionStart` hook loads it into context and stamps the current session id, so `claude --resume <id>` is always the right one; a `SessionEnd` hook logs any session that changed things without updating it.
+
+It exists because I kept typing the same instruction into every project. CLAUDE.md holds facts that stay true for months and `--resume` holds a transcript behind an id nobody remembers; neither says where we left off.
+
+**Try:** `/memoria init`, `/memoria save`, "where did we leave off"
 
 ### [`break-time`](break-time/)
 Tracks wall-clock time across a session and nudges you to stand up at configurable intervals. Implemented as a `UserPromptSubmit` hook, which means the reminder arrives inside the next response rather than in a notification you will ignore.

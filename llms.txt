@@ -1,6 +1,6 @@
 # claude-skills
 
-> Seven Claude Code skills by Antonio Elena. Each is a self-contained directory with a SKILL.md describing when to engage and how to reason about the task, plus playbooks, worked examples and deterministic shell scripts. No dependencies between them; install one or all.
+> Eight Claude Code skills by Antonio Elena. Each is a self-contained directory with a SKILL.md describing when to engage and how to reason about the task, plus playbooks, worked examples and deterministic shell scripts. No dependencies between them; install one or all.
 
 Skills are installed by placing a skill directory in `~/.claude/skills/`. `install.sh` symlinks them (macOS/Linux); `install.ps1` copies them (Windows).
 
@@ -11,6 +11,7 @@ Skills are installed by placing a skill directory in `~/.claude/skills/`. `insta
 - [bpmnemonic](bpmnemonic/SKILL.md): Converts BPMN 2.0 diagrams into a technical spec or a PRD, extracting actors from pools and lanes and exception flows from error and timer events.
 - [repo-badges](repo-badges/SKILL.md): Detects a repository's real characteristics and adds the corresponding shields.io badges.
 - [llms-txt](llms-txt/SKILL.md): Generates or validates an llms.txt file per the llmstxt.org spec.
+- [memoria](memoria/SKILL.md): A local, untracked _memoria.md per project holding resume id, state, decisions, open questions and next steps; loaded by a SessionStart hook, with a SessionEnd hook that logs sessions which forgot to update it.
 - [break-time](break-time/SKILL.md): Wall-clock break reminders inside a Claude Code session, implemented as a UserPromptSubmit hook.
 - [poet-commit](poet-commit/SKILL.md): Composes git commit messages as Japanese short-form poetry, with form selected by diff size.
 
