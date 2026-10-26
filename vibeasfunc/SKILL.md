@@ -1,12 +1,12 @@
 ---
 name: vibeasfunc
-description: Translate legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# (.NET 8+) — replacing imperative loops with LINQ, error codes with Result types, mutable state with immutable records, and side effects pushed to the boundary. Use when the user asks to modernize VBA, convert Excel macros to C#, rewrite a Sub as a pure function, port an .xlsm to a .NET console app, or invokes /vibeasfunc or says "vba to csharp".
-argument-hint: "[analyze|translate|map|scaffold] [path|construct|name]"
+description: Translate legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# on .NET 10 (or .NET 8 when the deployment is pinned) — replacing imperative loops with LINQ, error codes with Result types, mutable state with immutable records, and side effects pushed to the boundary. Use when the user asks to modernize VBA, convert Excel macros to C#, rewrite a Sub as a pure function, port an .xlsm to a .NET console app, or invokes /vibeasfunc or says "vba to csharp".
+argument-hint: "[analyze|translate|map|scaffold] [path|construct|name] [--framework net10.0|net8.0]"
 ---
 
 # vibeasfunc
 
-**ViBeAsFunC** — see your VBA anew, as functional C# (.NET 8+).
+**ViBeAsFunC** — see your VBA anew, as functional C# (.NET 10, or .NET 8).
 
 A modernization skill that ports legacy VBA into idiomatic functional C#. The goal is **not** a line-by-line transliteration. The goal is to extract the *intent* of a macro and re-express it in a form that:
 
@@ -40,11 +40,17 @@ The only slash command is `/vibeasfunc`; Claude Code derives it from the directo
 | `/vibeasfunc analyze [path]` | Read VBA, report constructs found, complexity score, suggested target architecture |
 | `/vibeasfunc translate <path>` | Translate one .bas / .cls / .frm / pasted block to functional C# |
 | `/vibeasfunc map <construct>` | Look up a specific VBA construct in `playbook/constructs.md` (e.g. `On Error Resume Next`, `For Each`, `Variant`) |
-| `/vibeasfunc scaffold <name>` | Scaffold a target .NET console project structure for the translated code |
+| `/vibeasfunc scaffold <name> [--framework net8.0]` | Scaffold a target .NET console project structure for the translated code (.NET 10 by default) |
 | Natural language: "convert this VBA macro to C#", "rewrite this Sub as a pure function", "modernize this Excel automation" | Same |
 
 ### Stop / disable
 Not session-based. One-shot per file.
+
+## Target framework
+
+Translate for **.NET 10** (LTS, C# 14) unless the user's deployment is pinned to **.NET 8** (C# 12). Ask once if the repo does not say: look for `<TargetFramework>` in an existing `.csproj` or an SDK version in `global.json`. .NET 8 support ends on 10 November 2026, so when the target is .NET 8, say that once in the architecture proposal.
+
+The two targets share almost everything. The differences are a handful of shorter idioms on .NET 10 (`CountBy`, `AggregateBy`, `Index`, `LeftJoin`, extension properties, the `field` keyword), listed with their .NET 8 equivalents in `playbook/patterns.md` §11. **Never emit a .NET 10-only API into a .NET 8 translation**: it does not compile, and the user finds out at build time.
 
 ## The translation playbook (5 steps)
 
@@ -97,7 +103,7 @@ Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to th
 
 1. **Read** the VBA source. Run `scripts/analyze-vba.sh` if a file is provided to get a construct inventory.
 2. **Categorize** constructs against `playbook/constructs.md` and call out anything in `playbook/pitfalls.md`.
-3. **Propose architecture** — "this looks like an Excel data-pipeline macro; recommend a console app with ClosedXML for I/O and a pure transformation core". Get user confirmation before translating.
+3. **Propose architecture** — "this looks like an Excel data-pipeline macro; recommend a .NET 10 console app with ClosedXML for I/O and a pure transformation core". State the target framework. Get user confirmation before translating.
 4. **Translate** following the 5-step playbook. Show the translation in chunks: types first, pure function next, boundary glue last.
 5. **Annotate** every non-obvious choice with a comment explaining what the original VBA construct was and why the new shape is better.
 6. **Suggest tests** for the pure function. Don't write them unless asked.
@@ -115,7 +121,7 @@ Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to th
 
 - `SKILL.md` — this file
 - `playbook/constructs.md` — VBA → functional C# construct mapping table
-- `playbook/patterns.md` — idiomatic functional C# patterns to introduce
+- `playbook/patterns.md` — idiomatic functional C# patterns to introduce, including the .NET 8 vs .NET 10 idioms (§11)
 - `playbook/excel.md` — Excel-specific guidance (COM interop vs ClosedXML/EPPlus)
 - `playbook/pitfalls.md` — common mistakes when translating
 - `examples/01-simple-loop.md` — For loop → LINQ
@@ -124,5 +130,5 @@ Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to th
 - `examples/04-string-parsing.md` — VBA string surgery → pattern matching + spans
 - `scripts/extract-vba.sh` — extract VBA modules from .xlsm (best-effort)
 - `scripts/analyze-vba.sh` — count constructs, score complexity
-- `scripts/scaffold-csproj.sh` — scaffold a .NET 8 console project for the translated code
+- `scripts/scaffold-csproj.sh` — scaffold a console + core + tests solution; `--framework net10.0` (default when a 10.x SDK is installed) or `net8.0`
 - `README.md` — short install + quickstart

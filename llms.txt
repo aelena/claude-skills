@@ -7,7 +7,7 @@ Skills are installed by placing a skill directory in `~/.claude/skills/`. `insta
 ## Skills
 
 - [seo-geo-audit](seo-geo-audit/SKILL.md): Audits a frontend for classical SEO and for GEO — how easily a language model can extract, cite and reason about the page. Emits a report card with file:line citations.
-- [vibeasfunc](vibeasfunc/SKILL.md): Translates legacy VBA into idiomatic functional C# on .NET 8+ — LINQ over loops, Result types over error codes, immutable records, side effects at the boundary.
+- [vibeasfunc](vibeasfunc/SKILL.md): Translates legacy VBA into idiomatic functional C# on .NET 10 (or .NET 8) — LINQ over loops, Result types over error codes, immutable records, side effects at the boundary.
 - [bpmnemonic](bpmnemonic/SKILL.md): Converts BPMN 2.0 diagrams into a technical spec or a PRD, extracting actors from pools and lanes and exception flows from error and timer events.
 - [repo-badges](repo-badges/SKILL.md): Detects a repository's real characteristics and adds the corresponding shields.io badges.
 - [llms-txt](llms-txt/SKILL.md): Generates or validates an llms.txt file per the llmstxt.org spec.

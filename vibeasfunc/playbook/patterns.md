@@ -190,3 +190,21 @@ async Task Main()
     await SqlWriter.SaveSummaryAsync(connectionString, summary);        // boundary, async
 }
 ```
+
+## 11. Version-gated idioms: .NET 8 vs .NET 10
+
+Everything above compiles on both targets. A few VBA shapes have a shorter, clearer form on .NET 10 (C# 14), and the translation must use the form its target supports. Each pair below was compiled against both. The .NET 10 column does not build on `net8.0`.
+
+| VBA shape | .NET 8 (C# 12) | .NET 10 (C# 14) |
+|---|---|---|
+| `dict(k) = dict(k) + 1` (count per key) | `.GroupBy(r => r.Customer).ToDictionary(g => g.Key, g => g.Count())` | `.CountBy(r => r.Customer)` |
+| `dict(k) = dict(k) + amt` (sum per key) | `.GroupBy(r => r.Customer).ToDictionary(g => g.Key, g => g.Sum(r => r.Amount))` | `.AggregateBy(r => r.Customer, 0m, (total, r) => total + r.Amount)` |
+| `For i = 1 To n` that needs the position | `.Select((r, i) => ...)` | `.Index().Select(x => ... x.Index ... x.Item ...)` |
+| `VLOOKUP(..., FALSE)` / `Match` that tolerates a miss | `.GroupJoin(...).SelectMany(x => x.cs.DefaultIfEmpty(), ...)` | `.LeftJoin(customers, r => r.Customer, c => c.Name, (r, c) => (r, c?.Region ?? "#N/A"))` |
+| Helper property on a type you don't own | an extension *method*: `static bool IsLarge(this InvoiceRow row)` | an extension *property* in an `extension(InvoiceRow row) { public bool IsLarge => ...; }` block |
+| `Property Let` with validation | an explicit backing field | the `field` keyword: `public decimal Value { get; init => field = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(value)); }` |
+| `If Not obj Is Nothing Then obj.X = v` (boundary code only) | `if (obj is not null) obj.X = v;` | `obj?.X = v;` |
+
+`CountBy`, `AggregateBy` and `Index` arrived in .NET 9, so they are absent on .NET 8. `CountBy` and `AggregateBy` return `KeyValuePair` sequences; add `.ToDictionary()` when the caller needs a lookup. `LeftJoin` passes `null` for a missing inner element, and that `null` is the `#N/A` the VBA was checking for: map it to a value or a `Result` error explicitly, never let it leak.
+
+Collection expressions (`[45, 90, 120]` for `Array(45, 90, 120)`), primary constructors and `DateOnly` work on both targets.

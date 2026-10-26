@@ -2,7 +2,7 @@
 
 **ViBeAsFunC** — see your VBA's vibes anew, as functional C#.
 
-A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that translates legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# (.NET 8+). Not a line-by-line transliteration — a structured rewrite that pulls business logic out of imperative loops, replaces error codes with `Result<T>` types, and pushes side effects to the boundary.
+A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that translates legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# on .NET 10, or .NET 8 when the deployment is pinned there. Not a line-by-line transliteration — a structured rewrite that pulls business logic out of imperative loops, replaces error codes with `Result<T>` types, and pushes side effects to the boundary.
 
 ## What it produces
 
@@ -67,7 +67,7 @@ Or just describe what you have: *"convert this Excel macro to functional C#"*.
 | `/vibeasfunc analyze path` | Run `scripts/analyze-vba.sh` and report constructs + complexity score |
 | `/vibeasfunc translate path` | Translate one file following the 5-step playbook |
 | `/vibeasfunc map "On Error Resume Next"` | Look up a specific construct in the playbook |
-| `/vibeasfunc scaffold MyApp` | Scaffold a .NET 8 console + core + tests project |
+| `/vibeasfunc scaffold MyApp` | Scaffold a .NET 10 console + core + tests project (`--framework net8.0` for .NET 8) |
 
 ## What's in the box
 
@@ -87,7 +87,7 @@ vibeasfunc/
 └── scripts/
     ├── extract-vba.sh    ← extract modules from .xlsm (best-effort, uses olevba)
     ├── analyze-vba.sh    ← count constructs, score complexity
-    └── scaffold-csproj.sh ← scaffold a target .NET 8 project structure
+    └── scaffold-csproj.sh ← scaffold a .NET 10 or .NET 8 project structure
 ```
 
 ## Philosophy

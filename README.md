@@ -34,7 +34,7 @@ The GEO half is the interesting half: it scores citability, answer-shaped struct
 **Try:** `/seo-geo-audit`
 
 ### [`vibeasfunc`](vibeasfunc/)
-Translates legacy VBA — Excel macros, Word automation, Access modules — into idiomatic functional C# on .NET 8+. Imperative loops become LINQ, error codes become `Result` types, mutable state becomes immutable records, and side effects get pushed to the boundary.
+Translates legacy VBA — Excel macros, Word automation, Access modules — into idiomatic functional C# on .NET 10, or on .NET 8 where a deployment is pinned. Imperative loops become LINQ, error codes become `Result` types, mutable state becomes immutable records, and side effects get pushed to the boundary.
 
 Written for the specific misery of inheriting a spreadsheet that runs a department.
 
@@ -116,3 +116,11 @@ Considered and left alone:
 
 - **`context: fork` for `seo-geo-audit`.** It would keep a large audit out of the main conversation, but `fix` mode asks before every edit, and a forked run cannot ask.
 - **`allowed-tools` to pre-approve the read-only scripts.** The rule has to match the exact command string, and with a substituted absolute path that can contain spaces, that is brittle. A permission prompt is better than a rule that silently never matches.
+
+### 2026-10-26: `vibeasfunc` targets .NET 10
+
+.NET 8 support ends on 10 November 2026, and .NET 10 is the current LTS. `vibeasfunc` now translates for .NET 10 by default and still supports .NET 8.
+
+- **`scaffold-csproj.sh --framework net10.0|net8.0`.** Without the flag it picks .NET 10 when a 10.x SDK is installed, else .NET 8, and refuses a framework the installed SDK cannot build. It no longer assumes the solution file is `.sln`, since the .NET 10 SDK writes `.slnx`.
+- **The skill picks the target first.** It reads `<TargetFramework>` or `global.json` when they exist, asks once when they don't, and never puts a .NET 10-only API into a .NET 8 translation.
+- **A new playbook section (`patterns.md` §11) pairs each .NET 10 idiom with its .NET 8 form.** `CountBy` and `AggregateBy` replace the `Scripting.Dictionary` accumulator, `LeftJoin` replaces a `VLOOKUP` that tolerates a miss, and `Index`, extension properties, the `field` keyword and null-conditional assignment cover the rest. Both columns were compiled on their targets, and the .NET 10 column was confirmed to fail on .NET 8.
