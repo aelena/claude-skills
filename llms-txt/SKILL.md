@@ -1,6 +1,7 @@
 ---
 name: llms-txt
 description: Generate or update an llms.txt file at the root of a code repository, following the llmstxt.org spec — making the project navigable by language models. Use when the user asks to create llms.txt, generate an LLM index, document a repo for AI consumption, audit existing llms.txt, or invokes /llms-txt, /llms-txt full, /llms-txt validate.
+argument-hint: "[full|validate|update]"
 ---
 
 # llms-txt
@@ -13,9 +14,11 @@ LLMs reading a repo blind have to guess what matters. `llms.txt` lets a project 
 
 ## Invocation
 
+The only slash command is `/llms-txt`; modes are arguments to it.
+
 | Trigger | Behavior |
 |---|---|
-| `/llms-txt` or `/llms-txt-gen` | Generate `llms.txt` at the repo root |
+| `/llms-txt` | Generate `llms.txt` at the repo root |
 | `/llms-txt full` | Also generate `llms-full.txt` (concatenated full docs, no truncation) |
 | `/llms-txt validate` | Validate an existing `llms.txt` against the spec |
 | `/llms-txt update` | Refresh an existing `llms.txt` with current repo state, preserving manual edits |
@@ -26,6 +29,8 @@ LLMs reading a repo blind have to guess what matters. `llms.txt` lets a project 
 Not really applicable — this is a one-shot generator, not a session mode. Just don't invoke it.
 
 ## Execution flow
+
+Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to this skill's directory, `${CLAUDE_SKILL_DIR}`, not to the working directory, which is the user's project. Run a script as `bash "${CLAUDE_SKILL_DIR}/scripts/<name>.sh"` and read reference files from the same place.
 
 1. **Discover candidates.** Run `scripts/discover.sh` to enumerate:
    - Project metadata files: `README*`, `package.json`, `pyproject.toml`, `Cargo.toml`, `Gemfile`, `go.mod`, etc.

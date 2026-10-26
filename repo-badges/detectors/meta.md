@@ -17,7 +17,7 @@ Detect repo-level metadata: license, language, size, maintenance signals. These 
   ```
 - **Priority:** 1
 - **Link target:** The LICENSE file in the repo.
-- **Prefer the static fallback when the LICENSE is freshly added.** If the `LICENSE` file is uncommitted, currently staged, or was added in the most recent commit, the dynamic GitHub endpoint will likely return `invalid` for up to ~1 hour: shields.io queried GitHub before its Licensee scanner classified the new file, and shields.io caches that "no license" response. In this case emit the static fallback (`shields.io/badge/license-{spdx}-blue`), which doesn't depend on any GitHub-side classification. The next `/badges update` (run after the cache warms) can convert it to the dynamic form.
+- **Prefer the static fallback when the LICENSE is freshly added.** If the `LICENSE` file is uncommitted, currently staged, or was added in the most recent commit, the dynamic GitHub endpoint will likely return `invalid` for up to ~1 hour: shields.io queried GitHub before its Licensee scanner classified the new file, and shields.io caches that "no license" response. In this case emit the static fallback (`shields.io/badge/license-{spdx}-blue`), which doesn't depend on any GitHub-side classification. The next `/repo-badges update` (run after the cache warms) can convert it to the dynamic form.
 
 ### Primary Language
 - **Detection:** Look at file extensions in the repo. Use the dominant language.

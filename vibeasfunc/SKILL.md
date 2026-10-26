@@ -1,6 +1,7 @@
 ---
 name: vibeasfunc
-description: Translate legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# (.NET 8+) — replacing imperative loops with LINQ, error codes with Result types, mutable state with immutable records, and side effects pushed to the boundary. Use when the user asks to modernize VBA, convert Excel macros to C#, rewrite a Sub as a pure function, port an .xlsm to a .NET console app, or invokes /vibeasfunc, /vba2csharp.
+description: Translate legacy VBA (Excel macros, Word automation, Access modules) into idiomatic functional C# (.NET 8+) — replacing imperative loops with LINQ, error codes with Result types, mutable state with immutable records, and side effects pushed to the boundary. Use when the user asks to modernize VBA, convert Excel macros to C#, rewrite a Sub as a pure function, port an .xlsm to a .NET console app, or invokes /vibeasfunc or says "vba to csharp".
+argument-hint: "[analyze|translate|map|scaffold] [path|construct|name]"
 ---
 
 # vibeasfunc
@@ -31,9 +32,11 @@ This skill encodes the playbook.
 
 ## Invocation
 
+The only slash command is `/vibeasfunc`; Claude Code derives it from the directory name, so `/vba2csharp` does not exist. Modes are arguments to it.
+
 | Trigger | Behavior |
 |---|---|
-| `/vibeasfunc` or `/vba2csharp` | Default — ask for a VBA file or pasted code, analyze it, propose a translation strategy, then translate |
+| `/vibeasfunc` | Default — ask for a VBA file or pasted code, analyze it, propose a translation strategy, then translate |
 | `/vibeasfunc analyze [path]` | Read VBA, report constructs found, complexity score, suggested target architecture |
 | `/vibeasfunc translate <path>` | Translate one .bas / .cls / .frm / pasted block to functional C# |
 | `/vibeasfunc map <construct>` | Look up a specific VBA construct in `playbook/constructs.md` (e.g. `On Error Resume Next`, `For Each`, `Variant`) |
@@ -89,6 +92,8 @@ Thin wrappers that read the inputs from Excel, call the pure function, and write
 Wherever the VBA used `On Error Resume Next` or `On Error GoTo`, the C# uses `Result<T, Error>` (from `FluentResults`, `LanguageExt`, or a hand-rolled discriminated union). Failures become first-class values, not control flow.
 
 ## Execution flow (what Claude does)
+
+Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to this skill's directory, `${CLAUDE_SKILL_DIR}`, not to the working directory, which is the user's project. Run a script as `bash "${CLAUDE_SKILL_DIR}/scripts/<name>.sh"` and read reference files from the same place.
 
 1. **Read** the VBA source. Run `scripts/analyze-vba.sh` if a file is provided to get a construct inventory.
 2. **Categorize** constructs against `playbook/constructs.md` and call out anything in `playbook/pitfalls.md`.

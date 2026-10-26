@@ -1,26 +1,36 @@
 ---
 name: poet-commit
-description: Compose git commit messages as Japanese short-form poems (haiku, senryū, tanka, renga). Use when the user asks for a poetic, lyrical, haiku, tanka, renga, or otherwise artistic commit message — or invokes /poet, /poet-commit, "commit as a haiku", "make this commit a poem". Auto-picks form by diff size unless overridden. Supports a --yolo mode for chaotic auto-commits.
+description: Compose git commit messages as Japanese short-form poems (haiku, senryū, tanka, renga). Use when the user asks for a poetic, lyrical, haiku, tanka, renga, or otherwise artistic commit message — or invokes /poet-commit, "commit as a haiku", "make this commit a poem". Auto-picks form by diff size unless overridden. Supports a --yolo mode for chaotic auto-commits.
+argument-hint: "[haiku|senryu|tanka|renga] [pure] [free|grounded] [--no-commit] [--yolo]"
 ---
 
 # poet-commit
 
 Turn a `git commit` into a small piece of poetry. Inspired by the **caveman** plugin's invocation/stop pattern: clear triggers, clear arguments, clear off-switch.
 
+## Current state
+
+Injected when the skill loads, so step 1 below starts from facts rather than a tool call:
+
+- Status: !`git status --short || true`
+- Staged: !`git diff --staged --stat || true`
+
 ## Invocation
+
+The only slash command is `/poet-commit`; Claude Code derives it from the directory name, so `/poet` does not exist. Modes are arguments to it.
 
 | Trigger | Behavior |
 |---|---|
-| `/poet` or `/poet-commit` | Default — auto-picks form by diff size, hybrid mode (conventional message + poem appended), preview before commit |
-| `/poet haiku` · `senryu` · `tanka` · `renga` | Force a specific form |
-| `/poet pure` | Poem-only commit message (no conventional prefix) |
-| `/poet free` | Imaginative — ignore the diff content, write from the vibe |
-| `/poet grounded` | Strictly derived from the diff (default) |
-| `/poet --no-commit` | Print poem only, do not commit |
-| `/poet --yolo` | Chaos mode: random form, random grounded/free, random pure/hybrid, **commit immediately without preview** |
-| Natural language: "commit this as a haiku", "make the commit poetic", "tanka commit" | Same as `/poet <form>` |
+| `/poet-commit` | Default — auto-picks form by diff size, hybrid mode (conventional message + poem appended), preview before commit |
+| `/poet-commit haiku` · `senryu` · `tanka` · `renga` | Force a specific form |
+| `/poet-commit pure` | Poem-only commit message (no conventional prefix) |
+| `/poet-commit free` | Imaginative — ignore the diff content, write from the vibe |
+| `/poet-commit grounded` | Strictly derived from the diff (default) |
+| `/poet-commit --no-commit` | Print poem only, do not commit |
+| `/poet-commit --yolo` | Chaos mode: random form, random grounded/free, random pure/hybrid, **commit immediately without preview** |
+| Natural language: "commit this as a haiku", "make the commit poetic", "tanka commit" | Same as `/poet-commit <form>` |
 
-Arguments combine: `/poet tanka grounded`, `/poet renga pure`, etc.
+Arguments combine: `/poet-commit tanka grounded`, `/poet-commit renga pure`, etc.
 
 ### Stop / disable
 
@@ -41,7 +51,7 @@ Override with an explicit form arg at any time.
 
 ## Execution flow
 
-1. **Read the diff.** Run `git status --short` and `git diff --staged`. If nothing is staged, fall back to `git diff` and warn the user that nothing will be committed unless they stage first. If both are empty, refuse.
+1. **Read the diff.** The status and staged stat are above; run `git diff --staged` for the content. If nothing is staged, fall back to `git diff` and warn the user that nothing will be committed unless they stage first. If both are empty, refuse.
 2. **Summarize the change** internally in one sentence. Identify a "kigo" — a single concrete technical motif (e.g. *cache*, *retry*, *boundary*, *migration*) that will anchor the poem if grounded.
 3. **Pick the form** from explicit arg, otherwise auto-select by file count (see table above).
 4. **Pick the mode** — grounded (default) or free if the user asked. In `--yolo`, randomize.
@@ -50,8 +60,8 @@ Override with an explicit form arg at any time.
    - **hybrid** (default): one conventional commit subject line (`type(scope): summary`), blank line, `---`, blank line, the poem.
    - **pure**: just the poem. Subject line is the poem's first line; body is the rest.
 7. **Preview & confirm.** Show the user the assembled message and ask for confirmation before committing. Skip this step **only** when `--yolo` is set.
-8. **Commit** by running `scripts/commit.sh` with the assembled message piped via heredoc (never `--no-verify`, never `--amend`).
-9. **Report tokens.** Run `scripts/token_report.sh` and print its one-line output. If it fails, print `(token usage unavailable)` and continue.
+8. **Commit** by running `bash "${CLAUDE_SKILL_DIR}/scripts/commit.sh"` with the assembled message piped via heredoc (never `--no-verify`, never `--amend`).
+9. **Report tokens.** Run `bash "${CLAUDE_SKILL_DIR}/scripts/token_report.sh" ${CLAUDE_SESSION_ID}` and print its one-line output. If it fails, print `(token usage unavailable)` and continue.
 
 ## Safety guardrails
 

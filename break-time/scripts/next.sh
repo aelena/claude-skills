@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # break-time: print the next scheduled nudge.
-# Used by /break-next (or "show next break-time") to answer just the
+# Used by /break-time next (or "show next break-time") to answer just the
 # "when's my next break?" question without dumping full state.
 
 set -uo pipefail

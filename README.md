@@ -38,14 +38,14 @@ Translates legacy VBA — Excel macros, Word automation, Access modules — into
 
 Written for the specific misery of inheriting a spreadsheet that runs a department.
 
-**Try:** `/vibeasfunc`, `/vba2csharp`
+**Try:** `/vibeasfunc`, `/vibeasfunc analyze Module1.bas`
 
 ### [`bpmnemonic`](bpmnemonic/)
 Turns BPMN 2.0 diagrams into documents people will read: a technical spec for engineers, a PRD for stakeholders, or both. Extracts actors from pools and lanes, narrates the happy path, captures alternative flows from gateways, and surfaces error and timer events as exception flows.
 
 The playbook includes the pitfalls — a parallel gateway narrated as a sequence is the classic one.
 
-**Try:** `/bpmnemonic`, `/bpmn-to-spec`
+**Try:** `/bpmnemonic`, `/bpmnemonic spec process.bpmn`
 
 ### [`repo-badges`](repo-badges/)
 Detects what a repository actually is — CI, package manager, language, framework, licence, coverage, quality tooling — and adds the shields.io badges that correspond to reality. Seven detector modules, a catalogue of endpoints, and layout templates so the badge block does not turn into a wall.
@@ -69,7 +69,7 @@ Tracks wall-clock time across a session and nudges you to stand up at configurab
 
 Bundled with [`HOOKS-101.md`](break-time/HOOKS-101.md), which is the document I wanted when I first tried to write a hook — the schema is nested twice and nobody explains why.
 
-**Try:** `/break`, `/snooze`
+**Try:** `/break-time`, `/break-time snooze 60`, "when's my next break?"
 
 ### [`poet-commit`](poet-commit/)
 Commit messages as Japanese short-form poetry — haiku, senryū, tanka, renga — with the form auto-selected by diff size. Entirely unserious, and the only skill here I would not defend on utility grounds.
@@ -98,3 +98,21 @@ Two things I would pass on. Put the trigger phrases in the `description` frontma
 ---
 
 Built by [Antonio Elena](https://aelena.com). Advisory work at [sig-intent.com](https://sig-intent.com).
+
+## Changelog
+
+### 2026-10-26: the older skills catch up with Claude Code
+
+A review of the seven skills that predate `memoria`, against what skills and hooks can do now.
+
+- **Slash commands that never existed are gone.** Claude Code creates one slash command per skill, named after its directory. `/vba2csharp`, `/bpmn-to-spec`, `/flow-to-doc`, `/llms-txt-gen`, `/poet`, `/break`, `/snooze`, `/break-next`, `/break-reset` and `/badges` were documented as commands, and none of them ever autocompleted. They are now arguments to the real command (`/break-time snooze 60`) or plain-language triggers. `seo-geo-audit` already said this; the others now do too.
+- **Scripts are found from anywhere.** The SKILL.md files said `scripts/discover.sh`, which resolves against the user's project rather than the skill. They now use `${CLAUDE_SKILL_DIR}`, which Claude Code replaces with the skill's own directory, whether `install.sh` symlinked it or `install.ps1` copied it.
+- **`argument-hint` on every skill that takes modes**, so autocomplete shows `[spec|prd|both|analyze] [path]` instead of nothing.
+- **Facts injected at load time instead of fetched with a tool call.** The `` !`command` `` syntax runs a command when the skill loads and puts its output in the prompt. `poet-commit` now starts with `git status` and the staged stat, `break-time` with its current state (so a bare `/break-time` answers without running anything), and `repo-badges` with the origin remote. Each command ends in `|| true`, because a failing injection aborts the whole skill.
+- **`poet-commit` reports tokens for the right session.** It used to guess the transcript from the working directory and take the newest file. Its slug rule was wrong for paths with a drive letter or a space, so it only worked through a loose fallback that could land on another project. It now takes `${CLAUDE_SESSION_ID}` and opens that exact transcript, with a corrected slug as the fallback.
+- **`break-time` no longer fakes `<system-reminder>` tags.** For `UserPromptSubmit`, the harness adds plain stdout to the context and labels it as hook output, so hand-made tags were redundant and imitated a format that belongs to the harness. The snooze hint now names `/break-time snooze 60` instead of a hard-coded `~/.claude/skills/...` path. [`HOOKS-101.md`](break-time/HOOKS-101.md) follows suit and gains a note on hooks declared in skill frontmatter (`hooks:` and `once: true`), including why `break-time` does not use them: those hooks register only when the skill is invoked, and a break reminder has to run in every session.
+
+Considered and left alone:
+
+- **`context: fork` for `seo-geo-audit`.** It would keep a large audit out of the main conversation, but `fix` mode asks before every edit, and a forked run cannot ask.
+- **`allowed-tools` to pre-approve the read-only scripts.** The rule has to match the exact command string, and with a substituted absolute path that can contain spaces, that is brittle. A permission prompt is better than a rule that silently never matches.

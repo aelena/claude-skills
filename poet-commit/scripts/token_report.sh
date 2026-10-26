@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # poet-commit: best-effort token usage report for the current Claude Code session.
 #
+# Usage: token_report.sh [session-id]
+#
 # Strategy:
-#   1. Slugify $PWD into the format Claude Code uses for ~/.claude/projects/<slug>/
-#      (drive letter + path with separators replaced by '-', leading 'C--' style).
-#   2. Find the most recently modified .jsonl in that dir.
+#   1. With a session id (SKILL.md passes ${CLAUDE_SESSION_ID}), read exactly
+#      ~/.claude/projects/*/<session-id>.jsonl. This is the reliable path.
+#   2. Without one, slugify $PWD into the format Claude Code uses for
+#      ~/.claude/projects/<slug>/ and take the most recently modified .jsonl
+#      there, which may belong to another session open in the same directory.
 #   3. Extract the last `usage` block and pull token counts out of it.
 #
 # Degrades gracefully: prints "(token usage unavailable)" on any failure.
@@ -19,35 +23,30 @@ fail() {
 PROJECTS_DIR="${HOME}/.claude/projects"
 [[ -d "$PROJECTS_DIR" ]] || fail "no projects dir"
 
-# Slugify $PWD the way Claude Code does:
-#   /c/Users/anton/OneDrive/.../claude-poetry-skill
-#     -> C--Users-anton-OneDrive-...-claude-poetry-skill
-# Handle both Git-Bash style (/c/...) and Windows style (C:/...).
+# Slugify $PWD the way Claude Code does: every character that is not a letter
+# or digit becomes '-', so the drive colon, separators and spaces all do.
+#   C:/Users/anton/OneDrive/My Digital Projects/claude-skills
+#     -> C--Users-anton-OneDrive-My-Digital-Projects-claude-skills
+# Git Bash reports $PWD as /c/Users/..., so turn that back into C:/Users/... first.
 slugify() {
   local p="$1"
-  # /c/Users/... -> C:/Users/...
   if [[ "$p" =~ ^/([a-zA-Z])/(.*)$ ]]; then
     p="${BASH_REMATCH[1]^^}:/${BASH_REMATCH[2]}"
   fi
-  # Replace ':' with nothing, '/' and '\' with '-'
-  p="${p//:/}"
-  p="${p//\//-}"
-  p="${p//\\/-}"
-  echo "$p"
+  echo "${p//[^a-zA-Z0-9]/-}"
 }
 
-SLUG="$(slugify "$PWD")"
-SESSION_DIR="${PROJECTS_DIR}/${SLUG}"
-
-# If exact slug not found, try to find a dir that ends with the basename
-if [[ ! -d "$SESSION_DIR" ]]; then
-  BASE="$(basename "$PWD")"
-  SESSION_DIR="$(find "$PROJECTS_DIR" -maxdepth 1 -type d -name "*${BASE}" 2>/dev/null | head -n1)"
+JSONL=""
+SESSION_ID="${1:-}"
+if [[ -n "$SESSION_ID" ]]; then
+  JSONL="$(find "$PROJECTS_DIR" -mindepth 2 -maxdepth 2 -name "${SESSION_ID}.jsonl" 2>/dev/null | head -n1)"
 fi
-[[ -n "${SESSION_DIR:-}" && -d "$SESSION_DIR" ]] || fail "no session dir for $PWD"
 
-# Most recent jsonl
-JSONL="$(ls -t "$SESSION_DIR"/*.jsonl 2>/dev/null | head -n1)"
+if [[ -z "$JSONL" ]]; then
+  SESSION_DIR="${PROJECTS_DIR}/$(slugify "$PWD")"
+  [[ -d "$SESSION_DIR" ]] || fail "no session dir for $PWD"
+  JSONL="$(ls -t "$SESSION_DIR"/*.jsonl 2>/dev/null | head -n1)"
+fi
 [[ -n "$JSONL" && -f "$JSONL" ]] || fail "no session jsonl"
 
 # Take the last full JSONL line that contains "output_tokens" — that's the

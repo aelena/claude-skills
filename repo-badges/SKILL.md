@@ -1,6 +1,7 @@
 ---
 name: repo-badges
 description: Automatically detect repo characteristics and add all relevant shields.io badges to README.md. Detects CI/CD, package managers, languages, frameworks, license, code quality tools, coverage, community links, and more. Use when the user asks to add badges, shields, add README badges, badge up a repo, or invokes /repo-badges.
+argument-hint: "[preview|minimal|full|update|remove] [--style <style>]"
 ---
 
 # repo-badges
@@ -29,9 +30,13 @@ Not session-based. One-shot generator. Just don't invoke it.
 
 ## Execution flow
 
+Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to this skill's directory, `${CLAUDE_SKILL_DIR}`, not to the working directory, which is the user's project. Run a script as `bash "${CLAUDE_SKILL_DIR}/scripts/<name>.sh"` and read reference files from the same place.
+
 1. **Read the README.** Read `README.md` (or `readme.md`, `README.rst`, `README`). If none exists, ask the user if they want one created. Note any existing badge section (look for consecutive image links at the top, or a section between `<!-- badges-start -->` / `<!-- badges-end -->` markers).
 
-2. **Detect repo owner and name.** Extract from:
+2. **Detect repo owner and name.** The origin remote, injected when the skill loads: !`git remote get-url origin 2>/dev/null || true`
+
+   If that is empty, extract from:
    - Git remote URL (`git remote get-url origin`)
    - `package.json` → `repository` field
    - Existing README links
@@ -80,7 +85,7 @@ Not session-based. One-shot generator. Just don't invoke it.
 
 9. **Verify endpoints resolve.** For each *dynamic* badge inserted (any URL on `img.shields.io/<service>/...` that is not `/badge/...`), fetch the `.json` form of the URL and inspect the `message` field. Report a table of `endpoint → message` to the user. If any return `invalid`, `not found`, or similar:
    - shields.io caches responses for ~1 hour. A freshly-pushed repo (or freshly-added `LICENSE`) routinely poisons the cache with `invalid` because shields.io queried GitHub before the new state propagated. Don't rewrite the URL — the cache will clear on its own.
-   - **Exception — license badge with a newly-added `LICENSE`:** if the `LICENSE` file is uncommitted, in the staging area, or was added in the most recent commit, prefer the **static fallback** documented in `detectors/meta.md` (the `shields.io/badge/license-{spdx}-blue` form) so the badge resolves immediately. Switch to the dynamic GitHub endpoint on a later `/badges update` once the cache warms.
+   - **Exception — license badge with a newly-added `LICENSE`:** if the `LICENSE` file is uncommitted, in the staging area, or was added in the most recent commit, prefer the **static fallback** documented in `detectors/meta.md` (the `shields.io/badge/license-{spdx}-blue` form) so the badge resolves immediately. Switch to the dynamic GitHub endpoint on a later `/repo-badges update` once the cache warms.
    - Also confirm valid markdown image syntax in the inserted block.
 
 ## Badge URL construction

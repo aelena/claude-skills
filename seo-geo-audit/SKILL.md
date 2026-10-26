@@ -1,6 +1,7 @@
 ---
 name: seo-geo-audit
 description: Audit a frontend codebase for both classical SEO (meta tags, semantic HTML, structured data, sitemaps) and GEO (Generative Engine Optimization — how easily LLMs can extract, cite, and reason about your content). Reads HTML, JSX, TSX, MDX, Astro, Vue, and Svelte source files; produces a markdown report card with file:line citations and concrete fixes. Use when the user asks for an SEO audit, GEO audit, LLM-friendliness check, structured data review, or invokes /audit, /seo-geo, /seo-geo-audit.
+argument-hint: "[deep] [seo|geo] [fix] [path] [report.md] [json] [csv] [sarif]"
 ---
 
 # seo-geo-audit
@@ -50,6 +51,8 @@ run over the wrong repository.
 Not session-based. One-shot. Just don't invoke it.
 
 ## Execution flow
+
+Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to this skill's directory, `${CLAUDE_SKILL_DIR}`, not to the working directory, which is the user's project. Run a script as `bash "${CLAUDE_SKILL_DIR}/scripts/<name>.sh"` and read reference files from the same place.
 
 1. **Detect framework** by reading `package.json`. Look for `next`, `astro`, `nuxt`, `svelte-kit`, `remix`, `gatsby`, `vite`, `vue`, or fall back to plain HTML. The framework determines file globs and where pages live (`pages/`, `app/`, `src/routes/`, `src/pages/`, `content/`, etc.).
 2. **Discover** content sources via `scripts/discover.sh <framework>`.

@@ -67,12 +67,14 @@ Annotated:
   - Letters, digits, `_`, `|` only → treated as a literal name or `|`-separated list (e.g. `"Bash"`, `"Edit|Write"`).
   - Any other characters → treated as a JavaScript regex (e.g. `"mcp__memory__.*"`).
 
-  What the matcher matches *on* depends on the event: tool name for `PreToolUse`/`PostToolUse`, source for `SessionStart` (`startup`/`resume`/`clear`), agent type for `SubagentStop`, etc. For events with no meaningful axis (like `UserPromptSubmit`), the matcher is ignored.
+  What the matcher matches *on* depends on the event: tool name for `PreToolUse`/`PostToolUse`, source for `SessionStart` (`startup`/`resume`/`clear`/`compact`), agent type for `SubagentStop`, etc. For events with no meaningful axis (like `UserPromptSubmit`), the matcher is ignored.
 - `"hooks": [...]` — the list of handlers to run for this event/matcher combination. Yes, the key is nested twice; that's just the schema.
 - `"type": "command"` — the handler type. `command` runs a shell command; the other types are `http` (POST JSON to a URL), `mcp_tool` (call an MCP server tool), `prompt` (single-turn LLM check with `$ARGUMENTS`), and `agent` (spawn a sub-agent with Read/Grep/Glob to make a decision). This guide stays with `command` because bash is enough for almost everything ambient — but know the others exist when you outgrow shell.
 - `"command"` — the literal shell command to run. Use absolute paths (`~` is fine, it expands).
 
 You can have multiple hooks for the same event. They run in order.
+
+Settings files are not the only home. A skill can declare hooks in its own `SKILL.md` frontmatter, in the same shape (event → matcher group → handlers). Those register only when the skill is invoked and last for the rest of the session; add `once: true` to a handler and it is removed after its first successful run. That suits a hook that belongs to a task ("while this audit runs, check every Bash call"). It does not suit an ambient hook like `break-time`, which has to run in sessions where nobody invoked anything, so `break-time` lives in `settings.json`.
 
 ## What a hook can do
 
@@ -95,16 +97,16 @@ A hook has three powers, and the precise rules depend on the event. The shape th
 
 A fourth power, **structured JSON output**, gets its own section below — that's what you reach for when plain stdout and exit codes aren't expressive enough.
 
-## Your first hook in 5 lines
+## Your first hook in 2 lines
 
 Open a new file at `~/my-first-hook.sh`:
 
 ```bash
 #!/usr/bin/env bash
-echo "<system-reminder>"
 echo "It is now $(date '+%H:%M'). Be efficient."
-echo "</system-reminder>"
 ```
+
+No wrapping tags needed: the harness adds the output to Claude's context and labels it as hook output on its own.
 
 Make it executable:
 
@@ -131,7 +133,7 @@ Add this to `~/.claude/settings.json` (merge with whatever's already there, don'
 
 Restart Claude Code. Submit any prompt. Claude will know what time it is and (probably) be slightly more concise.
 
-That's a working hook. Five lines. Most magical five lines in the harness.
+That's a working hook. Two lines. The most magical two lines in the harness.
 
 ## State across hook invocations
 
@@ -162,7 +164,7 @@ echo "count=$count" >> "$STATE"
 
 # Inject context if it's a milestone
 if (( count % 10 == 0 )); then
-  echo "<system-reminder>The user has submitted $count prompts today.</system-reminder>"
+  echo "The user has submitted $count prompts today."
 fi
 ```
 
@@ -397,10 +399,8 @@ if [[ -n "$nudge" ]]; then
     120) msg="Two hours straight. Close the laptop for ten. Diminishing returns are real." ;;
   esac
   cat <<EOF
-<system-reminder>
 break-time: $msg
-(Mention this briefly in your response, in your own voice, before answering the user's actual question. To snooze: bash ~/.claude/skills/break-time/scripts/snooze.sh 60)
-</system-reminder>
+(Mention this briefly in your response, in your own voice, before answering the user's actual question. To snooze, the user can run /break-time snooze 60.)
 EOF
 fi
 ```

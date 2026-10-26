@@ -1,6 +1,7 @@
 ---
 name: bpmnemonic
-description: Translate BPMN 2.0 process diagrams (.bpmn / .bpmn20.xml files) into readable, structured Markdown documents — either a technical spec (specs.md) for engineers or a product requirements doc (prd.md) for stakeholders, or both. Extracts actors from pools/lanes, narrates the happy path from start events through end events, captures alternative flows from gateways, and surfaces error/timer events as exception flows. Use when the user asks to convert BPMN to spec, generate PRD from a process diagram, document a workflow, or invokes /bpmnemonic, /bpmn-to-spec, /flow-to-doc.
+description: Translate BPMN 2.0 process diagrams (.bpmn / .bpmn20.xml files) into readable, structured Markdown documents — either a technical spec (specs.md) for engineers or a product requirements doc (prd.md) for stakeholders, or both. Extracts actors from pools/lanes, narrates the happy path from start events through end events, captures alternative flows from gateways, and surfaces error/timer events as exception flows. Use when the user asks to convert BPMN to spec, generate PRD from a process diagram, document a workflow, or invokes /bpmnemonic or says "bpmn to spec" or "flow to doc".
+argument-hint: "[spec|prd|both|analyze] [path]"
 ---
 
 # bpmnemonic
@@ -27,9 +28,11 @@ Both are derived from the same diagram. They differ in audience, vocabulary, and
 
 ## Invocation
 
+The only slash command is `/bpmnemonic`; Claude Code derives it from the directory name, so `/bpmn-to-spec` and `/flow-to-doc` do not exist. Modes are arguments to it.
+
 | Trigger | Behavior |
 |---|---|
-| `/bpmnemonic` or `/bpmn-to-spec` or `/flow-to-doc` | Default — analyze the file, ask which format to generate, then generate |
+| `/bpmnemonic` | Default — analyze the file, ask which format to generate, then generate |
 | `/bpmnemonic spec [path]` | Generate `specs.md` from the BPMN file |
 | `/bpmnemonic prd [path]` | Generate `prd.md` from the BPMN file |
 | `/bpmnemonic both [path]` | Generate both documents |
@@ -89,6 +92,8 @@ If the user doesn't specify, ask. Otherwise, use these heuristics:
 | When in doubt | **both** — they cite each other |
 
 ## Execution flow (what Claude does)
+
+Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to this skill's directory, `${CLAUDE_SKILL_DIR}`, not to the working directory, which is the user's project. Run a script as `bash "${CLAUDE_SKILL_DIR}/scripts/<name>.sh"` and read reference files from the same place.
 
 1. **Read** the .bpmn file (it's XML — use the Read tool, then parse mentally or via `scripts/parse-bpmn.sh`).
 2. **Inventory** the elements per Step 1.

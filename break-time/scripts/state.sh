@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # break-time: print current state in human-readable form.
-# Used by /break to show how long the active session has been running.
+# Used by /break-time to show how long the active session has been running.
 
 set -uo pipefail
 

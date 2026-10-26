@@ -99,12 +99,12 @@ case "$STYLE" in
     ;;
 esac
 
+# Plain stdout: for UserPromptSubmit the harness adds it to Claude's context and
+# labels it as hook output, so no wrapping tags are needed.
 cat <<EOF
-<system-reminder>
 break-time: $msg
 
-(The user has not been told this directly. Mention it briefly in your response, in your own voice, before answering their actual question. To snooze: bash ~/.claude/skills/break-time/scripts/snooze.sh 60)
-</system-reminder>
+(The user has not been told this directly. Mention it briefly in your response, in your own voice, before answering their actual question. To snooze, the user can run /break-time snooze 60 or say "snooze break-time".)
 EOF
 
 exit 0
