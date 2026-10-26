@@ -1,5 +1,9 @@
 # claude-skills
 
+<!-- badges-start -->
+[![Claude Code skills](https://img.shields.io/badge/claude%20code-skills-cc785c?style=flat-square&logo=anthropic&logoColor=white)](https://code.claude.com/docs/en/skills) [![License](https://img.shields.io/github/license/aelena/claude-skills?style=flat-square)](https://github.com/aelena/claude-skills/blob/main/LICENSE) [![Top language](https://img.shields.io/github/languages/top/aelena/claude-skills?style=flat-square)](https://github.com/aelena/claude-skills) [![Platform](https://img.shields.io/badge/platform-macos%20%7C%20linux%20%7C%20windows-lightgrey?style=flat-square)](#install)
+<!-- badges-end -->
+
 Eight [Claude Code](https://claude.com/claude-code) skills. Each one exists because I hit the problem it solves and got tired of re-explaining it.
 
 They share a shape: a `SKILL.md` that tells Claude when to engage and how to think about the task, a playbook of domain knowledge it can load on demand, worked examples, and shell scripts for the parts that should be deterministic rather than inferred. No skill here asks Claude to guess at something a script can establish.
