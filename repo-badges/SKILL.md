@@ -34,7 +34,7 @@ Paths below (`scripts/`, `playbook/`, `checks/` and the rest) are relative to th
 
 1. **Read the README.** Read `README.md` (or `readme.md`, `README.rst`, `README`). If none exists, ask the user if they want one created. Note any existing badge section (look for consecutive image links at the top, or a section between `<!-- badges-start -->` / `<!-- badges-end -->` markers).
 
-2. **Detect repo owner and name.** The origin remote, injected when the skill loads: !`git remote get-url origin 2>/dev/null || true`
+2. **Detect repo owner and name.** The origin remote (run when the skill loads, or first if Claude Code hands it over): !`git remote get-url origin 2>/dev/null || true`
 
    If that is empty, extract from:
    - Git remote URL (`git remote get-url origin`)

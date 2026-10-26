@@ -20,7 +20,7 @@ If you've never written a hook, read `HOOKS-101.md` first. It's a standalone tut
 
 ## Current state
 
-Injected when the skill loads, so `/break-time` with no argument needs no further tool call:
+The output of this command, run when the skill loads (or, where Claude Code hands it over instead, run it first). `/break-time` with no argument needs nothing else:
 
 !`bash "${CLAUDE_SKILL_DIR}/scripts/state.sh" || true`
 
@@ -93,6 +93,6 @@ STYLE=friendly           # friendly | aggressive | poetic
 - `scripts/check_break.sh` — the hook itself
 - `scripts/snooze.sh` — snooze nudges for N minutes
 - `scripts/reset.sh` — reset the active session timer
-- `scripts/state.sh` — print current state (injected into this file when `/break-time` loads)
+- `scripts/state.sh` — print current state (the command under *Current state* above)
 - `scripts/next.sh` — print just the next scheduled nudge (used by `/break-time next`)
 - `README.md` — short install instructions

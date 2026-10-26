@@ -10,7 +10,7 @@ Turn a `git commit` into a small piece of poetry. Inspired by the **caveman** pl
 
 ## Current state
 
-Injected when the skill loads, so step 1 below starts from facts rather than a tool call:
+Run when the skill loads (or, where Claude Code hands the commands over instead, run them first), so step 1 below starts from facts:
 
 - Status: !`git status --short || true`
 - Staged: !`git diff --staged --stat || true`
